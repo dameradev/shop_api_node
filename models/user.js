@@ -18,9 +18,9 @@ const userSchema = new Schema({
   }
 });
 
-userSchema.methods.generateAuthToken = () => {
+userSchema.methods.generateAuthToken = function() {
   return jwt.sign(
-    { email: this.email, _id: this._id },
+    { email: this.email, userId: this._id },
     config.get("jwtPrivateKey")
   );
 };

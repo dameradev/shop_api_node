@@ -14,7 +14,7 @@ exports.getProducts = (req, res, next) => {
 exports.createProduct = (req, res, next) => {
   const name = req.body.name;
   const description = req.body.description;
-
+  console.log(req.user);
   const product = new Product({
     name,
     description

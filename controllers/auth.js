@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const _ = require("lodash");
 
 // export shop_jwtPrivateKey=mySecureKey
 exports.signup = (req, res, next) => {
@@ -47,9 +48,8 @@ exports.login = async (req, res, next) => {
     } else {
       const token = user.generateAuthToken();
       res
-        .status(200)
         .header("x-auth-token", token)
-        .json({ token, userId: user._id.toString() });
+        .send(_.pick(user, ["_id", "name", "email"]));
     }
   } catch (err) {
     if (!err.statusCode) {
