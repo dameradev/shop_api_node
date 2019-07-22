@@ -4,12 +4,14 @@ const express = require("express");
 
 //ROUTES
 const productRoutes = require("./routes/product");
+const authRoutes = require("./routes/auth");
 
 const app = express();
 
 app.use(express.json());
 
 app.use("/products", productRoutes);
+app.use(authRoutes);
 
 mongoose
   .connect(MONGODB_URI, { useNewUrlParser: true })
