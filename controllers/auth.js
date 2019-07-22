@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 exports.signup = (req, res, next) => {
   const name = req.body.name;
@@ -22,4 +23,42 @@ exports.signup = (req, res, next) => {
     .catch(err => {
       console.log(err);
     });
+};
+
+exports.login = async (req, res, next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  let isEqual;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      const error = new Error("User with that email doesn't exist");
+      error.statusCode = 401;
+      throw error;
+    } else {
+      isEqual = await bcrypt.compare(password, user.password);
+    }
+
+    if (!isEqual) {
+      const error = new Error("Invalid password!");
+      error.statusCode = 401;
+      throw error;
+    } else {
+      const token = jwt.sign(
+        {
+          email: user.email,
+          userId: user._id
+        },
+        "secret",
+        { expiresIn: "1h" }
+      );
+      res.status(200).json({ token, userId: user._id.toString() });
+    }
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
