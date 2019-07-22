@@ -1,13 +1,16 @@
-const User = require("../models/user");
+const { User, validateUser } = require("../models/user");
 const bcrypt = require("bcryptjs");
+
 const _ = require("lodash");
 
 // export shop_jwtPrivateKey=mySecureKey
 exports.signup = (req, res, next) => {
+  const { error } = validateUser(req.body);
+  if (error) return res.status(400).json(error.details[0].message);
+
   const name = req.body.name;
   const email = req.body.email;
   const password = req.body.password;
-
   bcrypt
     .hash(password, 12)
     .then(hashedPassword => {
