@@ -1,4 +1,4 @@
-const Product = require("../models/product");
+const { Product, validateProduct } = require("../models/product");
 
 exports.getProducts = (req, res, next) => {
   Product.find()
@@ -12,12 +12,15 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.createProduct = (req, res, next) => {
+  const { error } = validateProduct(req.body);
+  if (error) return res.status(400).json({ message: error.details[0].message });
   const name = req.body.name;
   const description = req.body.description;
-  console.log(req.user);
+
   const product = new Product({
     name,
-    description
+    description,
+    userId: req.user.userId
   });
 
   product

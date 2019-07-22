@@ -6,7 +6,7 @@ const _ = require("lodash");
 // export shop_jwtPrivateKey=mySecureKey
 exports.signup = (req, res, next) => {
   const { error } = validateUser(req.body);
-  if (error) return res.status(400).json(error.details[0].message);
+  if (error) return res.status(400).json({ message: error.details[0].message });
 
   const name = req.body.name;
   const email = req.body.email;

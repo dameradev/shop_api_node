@@ -6,6 +6,8 @@ const express = require("express");
 const productRoutes = require("./routes/product");
 const authRoutes = require("./routes/auth");
 
+require("./startup/validation")();
+
 const app = express();
 
 app.use(express.json());
