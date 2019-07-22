@@ -46,7 +46,10 @@ exports.login = async (req, res, next) => {
       throw error;
     } else {
       const token = user.generateAuthToken();
-      res.status(200).json({ token, userId: user._id.toString() });
+      res
+        .status(200)
+        .header("x-auth-token", token)
+        .json({ token, userId: user._id.toString() });
     }
   } catch (err) {
     if (!err.statusCode) {

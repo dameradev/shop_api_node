@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
+const isAuth = require("../middleware/is-auth");
 
 const productController = require("../controllers/product");
 
 router.get("/", productController.getProducts);
 
-router.post("/create-product", productController.createProduct);
+router.post("/create-product", isAuth, productController.createProduct);
 
 module.exports = router;
