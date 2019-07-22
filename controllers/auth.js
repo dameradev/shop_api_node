@@ -1,7 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 
+// export shop_jwtPrivateKey=mySecureKey
 exports.signup = (req, res, next) => {
   const name = req.body.name;
   const email = req.body.email;
@@ -45,14 +45,7 @@ exports.login = async (req, res, next) => {
       error.statusCode = 401;
       throw error;
     } else {
-      const token = jwt.sign(
-        {
-          email: user.email,
-          userId: user._id
-        },
-        "secret",
-        { expiresIn: "1h" }
-      );
+      const token = user.generateAuthToken();
       res.status(200).json({ token, userId: user._id.toString() });
     }
   } catch (err) {
