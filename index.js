@@ -1,18 +1,20 @@
 const MONGODB_URI = "mongodb://localhost/shop_api";
 const mongoose = require("mongoose");
 const express = require("express");
+const cors = require("cors");
 
 //ROUTES
-const productRoutes = require("./routes/product");
+const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 
 require("./startup/validation")();
 
 const app = express();
+app.use(cors());
 
 app.use(express.json());
 
-app.use("/products", productRoutes);
+app.use("/shop", shopRoutes);
 app.use(authRoutes);
 
 mongoose

@@ -1,4 +1,5 @@
 const { Product, validateProduct } = require("../models/product");
+const { Restaurant, validateRestaurant } = require("../models/restaurant");
 
 exports.getProducts = (req, res, next) => {
   console.log(req.user);
@@ -31,6 +32,36 @@ exports.createProduct = (req, res, next) => {
         message: "Product created successfully",
         product
       });
+    })
+    .catch(err => console.log(err));
+};
+
+exports.getRestaurants = (req, res, next) => {
+  Restaurant.find().then(restaurants => {
+    res.status(200).json(restaurants);
+  });
+};
+
+exports.createRestaurant = (req, res, next) => {
+  const { error } = validateRestaurant(req.body);
+  if (error) return res.status(400).json({ message: error.details[0].message });
+
+  const name = req.body.name;
+  const img = req.body.img;
+  const workTime = req.body.workTime;
+
+  const restaurant = new Restaurant({
+    name,
+    img,
+    workTime
+  });
+
+  restaurant
+    .save()
+    .then(result => {
+      res
+        .status(200)
+        .json({ message: "Restaurant created successfully", restaurant });
     })
     .catch(err => console.log(err));
 };
