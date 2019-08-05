@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Joi = require("joi");
 
-const productSchema = new Schema({
+const foodSchema = new Schema({
   name: {
     type: String,
     required: true
@@ -18,9 +18,9 @@ const productSchema = new Schema({
   }
 });
 
-const Product = mongoose.model("Product", productSchema);
+const food = mongoose.model("Food", foodSchema);
 
-const validateProduct = function(product) {
+const validateFood = function(food) {
   const Schema = {
     name: Joi.string()
       .min(4)
@@ -32,8 +32,8 @@ const validateProduct = function(product) {
       .required(),
     userId: Joi.objectId().required()
   };
-  return Joi.validate(product, Schema);
+  return Joi.validate(food, Schema);
 };
 
-exports.Product = Product;
-exports.validateProduct = validateProduct;
+exports.Food = food;
+exports.validateFood = validateFood;

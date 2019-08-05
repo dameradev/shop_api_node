@@ -1,36 +1,36 @@
-const { Product, validateProduct } = require("../models/product");
+const { Food, validateFood } = require("../models/food");
 const { Restaurant, validateRestaurant } = require("../models/restaurant");
 
-exports.getProducts = (req, res, next) => {
+exports.getFoods = (req, res, next) => {
   console.log(req.user);
-  Product.find()
-    .then(products => {
+  Food.find()
+    .then(foods => {
       res.status(200).json({
-        message: "Products fetched sucessfully",
-        products
+        message: "Foods fetched sucessfully",
+        foods
       });
     })
     .catch(err => console.log(err));
 };
 
-exports.createProduct = (req, res, next) => {
-  const { error } = validateProduct(req.body);
+exports.createFood = (req, res, next) => {
+  const { error } = validateFood(req.body);
   if (error) return res.status(400).json({ message: error.details[0].message });
   const name = req.body.name;
   const description = req.body.description;
 
-  const product = new Product({
+  const food = new Food({
     name,
     description,
     userId: req.user.userId
   });
 
-  product
+  food
     .save()
     .then(result => {
       res.status(201).json({
-        message: "Product created successfully",
-        product
+        message: "Food created successfully",
+        food
       });
     })
     .catch(err => console.log(err));
@@ -39,6 +39,13 @@ exports.createProduct = (req, res, next) => {
 exports.getRestaurants = (req, res, next) => {
   Restaurant.find().then(restaurants => {
     res.status(200).json(restaurants);
+  });
+};
+
+exports.getRestaurant = (req, res, next) => {
+  const restaurantId = req.params.id;
+  Restaurant.findById(restaurantId).then(restaurant => {
+    res.status(200).json(restaurant);
   });
 };
 
@@ -68,7 +75,7 @@ exports.createRestaurant = (req, res, next) => {
 
 exports.postAddToCart = async (req, res, next) => {
   const prodId = req.body.prodId;
-  const product = await Product.findById(prodId);
+  const food = await Food.findById(prodId);
   const user = await User.findById(req.user.userId);
-  await user.addToCart(product);
+  await user.addToCart(food);
 };
