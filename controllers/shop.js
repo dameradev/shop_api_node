@@ -1,9 +1,12 @@
 const { Food, validateFood } = require("../models/food");
 const { Restaurant, validateRestaurant } = require("../models/restaurant");
+const mongoose = require("mongoose");
+const { Cart } = require("../models/cart");
 
 exports.getFoods = (req, res, next) => {
-  console.log(req.user);
+  const restId = req.params.id;
   Food.find()
+    .where({ restaurantId: restId })
     .then(foods => {
       res.status(200).json({
         message: "Foods fetched sucessfully",
@@ -14,15 +17,17 @@ exports.getFoods = (req, res, next) => {
 };
 
 exports.createFood = (req, res, next) => {
-  const { error } = validateFood(req.body);
-  if (error) return res.status(400).json({ message: error.details[0].message });
+  // const { error } = validateFood(req.body);
+  // if (error) return res.status(400).json({ message: error.details[0].message });
   const name = req.body.name;
   const description = req.body.description;
+  console.log(req.body);
+  const restaurantId = mongoose.Types.ObjectId(req.body.restaurantId);
 
   const food = new Food({
     name,
     description,
-    userId: req.user.userId
+    restaurantId
   });
 
   food
@@ -71,6 +76,53 @@ exports.createRestaurant = (req, res, next) => {
         .json({ message: "Restaurant created successfully", restaurant });
     })
     .catch(err => console.log(err));
+};
+
+exports.getCart = (req, res, next) => {
+  Cart.findOne().then(cart => {
+    res.status(200).json(cart.cart);
+  });
+};
+
+exports.addToCart = async (req, res, next) => {
+  // console.log(req.body);
+  const recievedItems = req.body[0];
+  let cart = await Cart.findOne();
+  if (!cart) {
+    cart = new Cart({
+      cart: {
+        items: recievedItems
+      }
+    });
+  } else {
+    cart.cart.items = req.body;
+    // cart.cart.items.forEach((cp, index) => {
+    //   cp.quantity = req.body[index].quantity;
+    // });
+  }
+
+  // const cartItems = [...cart.cart.items];
+  // // console.log(cartItems);
+  // const cartItemIndex = cartItems.findIndex(cp => {
+  //   return cp["foodId"].toString() === recievedItems.foodId.toString();
+  // });
+
+  // console.log(cartItemIndex, "cartITEM INDEXX");
+  // console.log("recitems", recievedItems);
+  // if (cartItemIndex < 0) {
+  //   cartItems.push({
+  //     foodId: recievedItems.foodId,
+  //     quantity: recievedItems.quantity,
+  //     restaurantId: recievedItems.restaurantId
+  //   });
+  // } else {
+  //   cartItems[cartItemIndex].quantity += 1;
+  // }
+
+  // console.log(cartItems);
+  // console.log(cart.cart.items);
+  // cart.cart.items = cartItems;
+  await cart.save();
 };
 
 exports.postAddToCart = async (req, res, next) => {
