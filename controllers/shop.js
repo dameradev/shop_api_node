@@ -78,10 +78,23 @@ exports.createRestaurant = (req, res, next) => {
     .catch(err => console.log(err));
 };
 
+exports.getCartStatus = (req, res, next) => {
+  Cart.findOne()
+    .then(cart => {
+      console.log(cart.cart);
+      res.status(200).json(cart.cart);
+    })
+    .catch(err => console.log(err));
+};
+
 exports.getCart = (req, res, next) => {
-  Cart.findOne().then(cart => {
-    res.status(200).json(cart.cart);
-  });
+  Cart.findOne()
+    .deepPopulate("cart.items.foodId")
+    .then(cart => {
+      console.log(cart.cart);
+      res.status(200).json(cart.cart);
+    })
+    .catch(err => console.log(err));
 };
 
 exports.addToCart = async (req, res, next) => {
@@ -122,7 +135,9 @@ exports.addToCart = async (req, res, next) => {
   // console.log(cartItems);
   // console.log(cart.cart.items);
   // cart.cart.items = cartItems;
-  await cart.save();
+  cart.save().then(result => {
+    res.send(result);
+  });
 };
 
 exports.postAddToCart = async (req, res, next) => {

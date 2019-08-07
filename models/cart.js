@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Joi = require("joi");
-
+const deepPopulate = require("mongoose-deep-populate")(mongoose);
 const cartSchema = new Schema({
   cart: {
     items: [
@@ -24,7 +24,7 @@ const cartSchema = new Schema({
     ]
   }
 });
-
+cartSchema.plugin(deepPopulate);
 const cart = mongoose.model("Cart", cartSchema);
 
 exports.Cart = cart;
