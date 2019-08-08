@@ -14,6 +14,11 @@ const restaurantSchema = new Schema({
   workTime: {
     type: Date
     // required: true
+  },
+  rating: {
+    stars: {
+      type: Number
+    }
   }
 });
 

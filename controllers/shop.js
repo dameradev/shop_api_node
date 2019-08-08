@@ -42,6 +42,7 @@ exports.createFood = (req, res, next) => {
 };
 
 exports.getRestaurants = (req, res, next) => {
+  // throw new Error("SHIT NIGGA");
   Restaurant.find().then(restaurants => {
     res.status(200).json(restaurants);
   });
@@ -76,6 +77,18 @@ exports.createRestaurant = (req, res, next) => {
         .json({ message: "Restaurant created successfully", restaurant });
     })
     .catch(err => console.log(err));
+};
+
+exports.rateRestaurant = (req, res, next) => {
+  Restaurant.findById(req.body.restaurantId)
+    .then(restaurant => {
+      console.log(restaurant);
+      restaurant.rating.stars = req.body.stars;
+      return restaurant.save();
+    })
+    .then(result => {
+      console.log(result);
+    });
 };
 
 exports.getCartStatus = (req, res, next) => {

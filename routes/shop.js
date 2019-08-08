@@ -19,4 +19,6 @@ router.post("/add-to-cart", shopController.addToCart);
 router.get("/get-cart", shopController.getCart);
 router.get("/status", shopController.getCartStatus);
 
+router.post("/rate-restaurant", shopController.rateRestaurant);
+
 module.exports = router;
