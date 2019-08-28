@@ -4,6 +4,8 @@ const isAuth = require("../middleware/is-auth");
 
 const shopController = require("../controllers/shop");
 
+router.get("/foods", shopController.getAllFoods);
+
 router.get("/foods/:id", shopController.getFoods);
 
 router.post("/create-food", shopController.createFood);
@@ -17,8 +19,10 @@ router.post("/create-restaurant", shopController.createRestaurant);
 router.post("/add-to-cart", shopController.addToCart);
 
 router.get("/get-cart", shopController.getCart);
-router.get("/status", shopController.getCartStatus);
+// router.get("/status", shopController.getCartStatus);
 
 router.post("/rate-restaurant", shopController.rateRestaurant);
+
+router.post("/create-order", shopController.createOrder);
 
 module.exports = router;

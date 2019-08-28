@@ -18,6 +18,9 @@ const restaurantSchema = new Schema({
   rating: {
     stars: {
       type: Number
+    },
+    review: {
+      type: String
     }
   }
 });

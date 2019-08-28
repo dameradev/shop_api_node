@@ -2,6 +2,15 @@ const { Food, validateFood } = require("../models/food");
 const { Restaurant, validateRestaurant } = require("../models/restaurant");
 const mongoose = require("mongoose");
 const { Cart } = require("../models/cart");
+const Order = require("../models/order");
+
+exports.getAllFoods = (req, res, next) => {
+  Food.find()
+    .then(foods => {
+      res.status(200).json(foods);
+    })
+    .catch(err => console.log(err));
+};
 
 exports.getFoods = (req, res, next) => {
   const restId = req.params.id;
@@ -21,12 +30,14 @@ exports.createFood = (req, res, next) => {
   // if (error) return res.status(400).json({ message: error.details[0].message });
   const name = req.body.name;
   const description = req.body.description;
+  const price = req.body.price;
   console.log(req.body);
   const restaurantId = mongoose.Types.ObjectId(req.body.restaurantId);
 
   const food = new Food({
     name,
     description,
+    price,
     restaurantId
   });
 
@@ -42,7 +53,6 @@ exports.createFood = (req, res, next) => {
 };
 
 exports.getRestaurants = (req, res, next) => {
-  // throw new Error("SHIT NIGGA");
   Restaurant.find().then(restaurants => {
     res.status(200).json(restaurants);
   });
@@ -82,8 +92,8 @@ exports.createRestaurant = (req, res, next) => {
 exports.rateRestaurant = (req, res, next) => {
   Restaurant.findById(req.body.restaurantId)
     .then(restaurant => {
-      console.log(restaurant);
       restaurant.rating.stars = req.body.stars;
+      // restaurant.rating.review = req.body.review;
       return restaurant.save();
     })
     .then(result => {
@@ -91,14 +101,14 @@ exports.rateRestaurant = (req, res, next) => {
     });
 };
 
-exports.getCartStatus = (req, res, next) => {
-  Cart.findOne()
-    .then(cart => {
-      console.log(cart.cart);
-      res.status(200).json(cart.cart);
-    })
-    .catch(err => console.log(err));
-};
+// exports.getCartStatus = (req, res, next) => {
+//   Cart.findOne()
+//     .then(cart => {
+//       console.log(cart.cart);
+//       res.status(200).json(cart.cart);
+//     })
+//     .catch(err => console.log(err));
+// };
 
 exports.getCart = (req, res, next) => {
   Cart.findOne()
@@ -111,7 +121,6 @@ exports.getCart = (req, res, next) => {
 };
 
 exports.addToCart = async (req, res, next) => {
-  // console.log(req.body);
   const recievedItems = req.body[0];
   let cart = await Cart.findOne();
   if (!cart) {
@@ -158,4 +167,18 @@ exports.postAddToCart = async (req, res, next) => {
   const food = await Food.findById(prodId);
   const user = await User.findById(req.user.userId);
   await user.addToCart(food);
+};
+
+exports.createOrder = (req, res, next) => {
+  // console.log(req.body);
+
+  order = new Order({
+    items: req.body.items,
+    formData: {
+      address: req.body.formData.address,
+      name: req.body.formData.name
+    }
+  });
+
+  order.save();
 };
