@@ -169,6 +169,16 @@ exports.postAddToCart = async (req, res, next) => {
   await user.addToCart(food);
 };
 
+exports.getOrders = (req, res, next) => {
+  Order.find()
+    .then(orders => {
+      res.status(200).json(orders);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+};
+
 exports.createOrder = (req, res, next) => {
   // console.log(req.body);
 
