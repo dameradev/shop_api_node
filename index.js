@@ -13,9 +13,8 @@ const app = express();
 app.use(cors());
 
 app.use(express.json());
-
-app.use("/shop", shopRoutes);
 app.use(authRoutes);
+app.use("/shop", shopRoutes);
 
 mongoose
   .connect(MONGODB_URI, { useNewUrlParser: true })

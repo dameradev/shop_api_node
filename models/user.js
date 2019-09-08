@@ -31,12 +31,7 @@ const userSchema = new Schema({
   }
 });
 
-userSchema.methods.generateAuthToken = function() {
-  return jwt.sign(
-    { email: this.email, userId: this._id },
-    config.get("jwtPrivateKey")
-  );
-};
+userSchema.methods.generateAuthToken = function() {};
 
 userSchema.methods.addToCart = function(product) {
   const cartProductIndex = this.cart.items.findIndex(cp => {
