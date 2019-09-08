@@ -3,6 +3,7 @@ const { Restaurant, validateRestaurant } = require("../models/restaurant");
 const mongoose = require("mongoose");
 const { Cart } = require("../models/cart");
 const Order = require("../models/order");
+const { User } = require("../models/user");
 
 exports.getAllFoods = (req, res, next) => {
   Food.find()
@@ -101,14 +102,10 @@ exports.rateRestaurant = (req, res, next) => {
     });
 };
 
-// exports.getCartStatus = (req, res, next) => {
-//   Cart.findOne()
-//     .then(cart => {
-//       console.log(cart.cart);
-//       res.status(200).json(cart.cart);
-//     })
-//     .catch(err => console.log(err));
-// };
+exports.getCartStatus = async (req, res, next) => {
+  const user = await User.findById(req.params.userId);
+  res.status(200).json(user.cart.items);
+};
 
 exports.getCart = (req, res, next) => {
   Cart.findOne()
@@ -121,45 +118,30 @@ exports.getCart = (req, res, next) => {
 };
 
 exports.addToCart = async (req, res, next) => {
-  const recievedItems = req.body[0];
-  let cart = await Cart.findOne();
-  if (!cart) {
-    cart = new Cart({
-      cart: {
-        items: recievedItems
-      }
-    });
+  const user = await User.findById(req.body.userId);
+
+  const foodItem = {
+    foodId: req.body.foodId,
+    quantity: 1,
+    restaurantId: req.body.restaurantId
+  };
+
+  const food = await Food.findById(foodItem.foodId);
+
+  user.cart.totalPrice += food.price;
+
+  const index = user.cart.items.findIndex(
+    foodItem => foodItem.foodId.toString() === req.body.foodId.toString()
+  );
+
+  if (index === -1) {
+    user.cart.items.push(foodItem);
   } else {
-    cart.cart.items = req.body;
-    // cart.cart.items.forEach((cp, index) => {
-    //   cp.quantity = req.body[index].quantity;
-    // });
+    user.cart.items[index].quantity += 1;
   }
 
-  // const cartItems = [...cart.cart.items];
-  // // console.log(cartItems);
-  // const cartItemIndex = cartItems.findIndex(cp => {
-  //   return cp["foodId"].toString() === recievedItems.foodId.toString();
-  // });
-
-  // console.log(cartItemIndex, "cartITEM INDEXX");
-  // console.log("recitems", recievedItems);
-  // if (cartItemIndex < 0) {
-  //   cartItems.push({
-  //     foodId: recievedItems.foodId,
-  //     quantity: recievedItems.quantity,
-  //     restaurantId: recievedItems.restaurantId
-  //   });
-  // } else {
-  //   cartItems[cartItemIndex].quantity += 1;
-  // }
-
-  // console.log(cartItems);
-  // console.log(cart.cart.items);
-  // cart.cart.items = cartItems;
-  cart.save().then(result => {
-    res.send(result);
-  });
+  await user.save();
+  res.status(200).json(user.cart.items);
 };
 
 exports.postAddToCart = async (req, res, next) => {

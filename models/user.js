@@ -20,14 +20,23 @@ const userSchema = new Schema({
   cart: {
     items: [
       {
-        productId: {
-          type: Schema.Types.ObjectId,
-          ref: "Product",
-          required: true
+        foodId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Food"
+          // required: true
         },
-        quantity: { type: Number, required: true }
+        quantity: {
+          type: Number
+          // required: true
+        },
+        restaurantId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Restaurant"
+          // required: true
+        }
       }
-    ]
+    ],
+    totalPrice: { type: Number, default: 0 }
   }
 });
 
